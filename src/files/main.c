@@ -1,7 +1,9 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include<string.h>
-
+#include<ctype.h>
+#include<time.h>
+int N;
 //structure d'un fournisseur
 typedef struct {
 int code;
@@ -19,7 +21,7 @@ typedef struct{
 }medicament;
 void init(int n,medicament *med);
 void affichage(int a,int *N,medicament *med);
-
+void code_unique(char *s);
 //fontion d'affichage des cas possible
 void affichage(int a,int *N,medicament *med){
 int i,j;
@@ -60,7 +62,7 @@ printf("Entrer le nom du fournisseur:\n");
     free(s);
     break;
 case 'b':
-//cas d'affichage de tous lesmedicaments d'apres la categorie
+//cas d'affichage de tous les medicaments d'apres la categorie
     printf("Entrer la categorie:\n");
     scanf("%s",s);
      for(i=0;i<*N;i++){
@@ -183,39 +185,83 @@ med=(medicament*)realloc(med,(*N-1)*sizeof(medicament));
 *N=(*N)-1;
 break;
 case 'e':
-
+printf("Entrer le code du fournisseur:\n");
+scanf("%d",j);
+for(i=0;i<*N;i++){
+    if(j==(med+i)->forn.code){
+        j=i;
+        break;
+    }}
+temp=*(med+*N);
+*(med+*N)=*(med+j);
+*(med+j)=temp;
+med=(medicament*)realloc(med,(*N-1)*sizeof(medicament));
+*N=(*N)-1;
+break;
+case 'f':
+printf("Entrer la lettre souhaiter:\n");
+scanf("%c",&c);
+i=0;
+while(i<*N){
+    if(c==(med+i)->forn.nom[strlen((med+i)->forn.nom)-1]){
+        j=i;
+        temp=*(med+*N);
+*(med+*N)=*(med+j);
+*(med+j)=temp;
+med=(medicament*)realloc(med,(*N-1)*sizeof(medicament));
+*N=(*N)-1;
+i=0;
+    }
+    i++;}
 break;
 default:
+printf("Error\n");
     break;
 }
+case 6:
 break;
 default:
-    break;
-    }
+printf("Error");
+break;}
 
 
-
+}
+//generateur du code unique
+void code_unique(char *s) {
+   int i,r;
+    const char alphanum[] = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+for(i=0;i<10;i++){
+     r = rand() % (sizeof(alphanum) - 1);
+     *(s+i)=alphanum[r];
+}
+   
 }
 //fontion d'initialisation
 void init(int n,medicament *med){
+srand(time(NULL));
     int i;
     for(i=0;i<n;i++){
        printf("Entrer Le Nom,La Categorie,Le prix,La Quantite en stock,Le Nom du fournisseur et son adresse et la nationalite\n");
        scanf("%s%s%f%u%s%s%s",(med+i)->nom,(med+i)->categorie,(med+i)->prix,&(med+i)->quant_stock,(med+i)->forn.nom,(med+i)->forn.adresse,(med+i)->forn.nationalite);
+       (med+i)->forn.code=rand()%9999999999;
+        code_unique((med+i)->code);
     }
 }
 
 
 int main(){
-  int N,i; 
-   printf("Entrer le nombre des medicaments:\n");
-    scanf("%d",&N);
-printf("Menu De Gestion\n");
-
+    int i;
+printf("********Menu De Gestion********\n");
+printf("1. Afficher le detail du stock de la pharmacie\n\n");
+printf("2. Afficher les medicaments de la categorie ayant le moins de medicament de la pharmacie\n\n");
+printf("3. Afficher medicaments:\na. D'un fournisseur donne\nb. D'une cateforie donnee\nc. Ayant un prix donne\n\n");
+printf("4. Ajouter un medicament:\na. Au debut du tableau\nb. A la fin du tableau\nc. En une position donnee\nd. Apres le 2eme medicament ayant la meme categorie aue celui a inserer\n\n");
+printf("5. Supprimier un medicament:\na. Au debut\nb. A la fin\nc. En une position donnee\nd.Par nom du medicament\ne. Par fournisseur\nf. Dont nom du fournisseur se termine par une lettre donnee\n\n");
+printf("6. Quitter le programe\n\n");
+printf("********************************************************************");
+scanf("%d",i);
 medicament *t;
-t=(medicament*)malloc(N*sizeof(medicament));
-init(N,t);
-affichage(1,&N,t);
+affichage(i,&N,t);
 
 
     return 0;
