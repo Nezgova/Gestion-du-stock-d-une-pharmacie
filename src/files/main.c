@@ -5,6 +5,7 @@
 #include <ctype.h>
 #include <time.h>
 #include <stdbool.h>
+#include <assert.h>
 
 int N;
 // qsort(t, N, sizeof(medicament), (int (*)(const void *, const void *))strcmp);
@@ -27,11 +28,10 @@ typedef struct
 
 } medicament;
 void upper_everything(char *s);
-void init(int n, medicament *med);
-void affichage(int choix, medicament *med);
+void init(int n, medicament *t);
 void code_unique(char *s);
 
-void affiche_min_categ(int N, medicament *med)
+void affiche_min_categ(int N, medicament *t)
 {
     char Categ[10];
     unsigned int min = UINT_MAX;
@@ -41,16 +41,16 @@ void affiche_min_categ(int N, medicament *med)
         unsigned int total = 0;
         for (int j = 0; j < N; j++)
         {
-            if (strcmp((med + i)->categorie, (med + j)->categorie) == 0)
+            if (strcmp((t + i)->categorie, (t + j)->categorie) == 0)
             {
-                total += (med + j)->quant_stock;
+                total += (t + j)->quant_stock;
             }
         }
 
         if (total < min)
         {
             min = total;
-            strcpy(Categ, (med + i)->categorie);
+            strcpy(Categ, (t + i)->categorie);
         }
     }
 
@@ -58,345 +58,22 @@ void affiche_min_categ(int N, medicament *med)
 
     for (int i = 0; i < N; i++)
     {
-        if (strcmp((med + i)->categorie, Categ) == 0)
+        if (strcmp((t + i)->categorie, Categ) == 0)
         {
             printf("Medicament %d:\n", i + 1);
-            printf("Code: %s\n", (med + i)->code);
-            printf("Nom: %s\n", (med + i)->nom);
-            printf("Categorie: %s\n", (med + i)->categorie);
-            printf("Prix: %.2f\n", (med + i)->prix);
-            printf("Quantite en stock: %u\n", (med + i)->quant_stock);
+            printf("Code: %s\n", (t + i)->code);
+            printf("Nom: %s\n", (t + i)->nom);
+            printf("Categorie: %s\n", (t + i)->categorie);
+            printf("Prix: %.2f\n", (t + i)->prix);
+            printf("Quantite en stock: %u\n", (t + i)->quant_stock);
             printf("Fournisseur:\n");
-            printf("\tCode Four: %d\n", (med + i)->forn.code);
-            printf("\tNom: %s\n", (med + i)->forn.nom);
-            printf("\tAdresse: %s\n", (med + i)->forn.adresse);
-            printf("\tNationalite: %s\n", (med + i)->forn.nationalite);
+            printf("\tCode Four: %d\n", (t + i)->forn.code);
+            printf("\tNom: %s\n", (t + i)->forn.nom);
+            printf("\tAdresse: %s\n", (t + i)->forn.adresse);
+            printf("\tNationalite: %s\n", (t + i)->forn.nationalite);
             printf("--------------------\n");
         }
     }
-}
-
-// fontion d'affichage des cas possible
-void affichage(int choix, medicament *med)
-{
-    int i, j = 0;
-    char c;
-    char *s;
-    medicament temp;
-    s = (char *)malloc(10 * sizeof(char));
-    switch (choix)
-    {
-    case 1:
-        // premier cas si l'utilisateur entre la valeur 1
-        int somme_med_valable = 0;
-        printf("Stock details:\n");
-        for (int i = 0; i < N; i++)
-        {
-            printf("Medicament %d:\n", i + 1);
-            printf("Code: %s\n", (med + i)->code);
-            printf("Nom: %s\n", (med + i)->nom);
-            printf("Categorie: %s\n", (med + i)->categorie);
-            printf("Prix: %.2f\n", (med + i)->prix);
-            printf("Quantite en stock: %u\n", (med + i)->quant_stock);
-            printf("Fournisseur:\n");
-            printf("\tCode Four: %d\n", (med + i)->forn.code);
-            printf("\tNom: %s\n", (med + i)->forn.nom);
-            printf("\tAdresse: %s\n", (med + i)->forn.adresse);
-            printf("\tNationalite: %s\n", (med + i)->forn.nationalite);
-            printf("--------------------\n");
-            somme_med_valable += (med + i)->quant_stock;
-        }
-        printf("La somme des medicaments valable est:%d\n", somme_med_valable);
-        break;
-    case 2:
-        // 2eme cas si l'utilisateur entre le nombre 2
-        affiche_min_categ(N, med);
-        break;
-    case 3:
-        // 3eme cas si l'utilisateur entre le nombre 3
-        printf("Entrer :\na-D'apres le fournisseur donnee\nb-D'apres ca categorie donnee\nc-D'apres le prix\n");
-        rewind(stdin);
-        bool found = false;
-        scanf("%c", &c);
-        rewind(stdin);
-        switch (c)
-        {
-        case 'a':
-            // cas d'affichage de tous lesmedicaments d'apres un fournisseur
-            printf("Entrer le nom du fournisseur:\n");
-            scanf("%s", s);
-            rewind(stdin);
-            upper_everything(s);
-
-            for (i = 0; i < N; i++)
-            {
-                if (strcmp(s, (med + i)->forn.nom) == 0)
-                {
-                    found = true;
-                    printf("Medicament %d:\n", i + 1);
-                    printf("Code: %s\n", (med + i)->code);
-                    printf("Nom: %s\n", (med + i)->nom);
-                    printf("Categorie: %s\n", (med + i)->categorie);
-                    printf("Prix: %.2f\n", (med + i)->prix);
-                    printf("Quantite en stock: %u\n", (med + i)->quant_stock);
-                    printf("Fournisseur:\n");
-                    printf("\tCode Four: %d\n", (med + i)->forn.code);
-                    printf("\tNom: %s\n", (med + i)->forn.nom);
-                    printf("\tAdresse: %s\n", (med + i)->forn.adresse);
-                    printf("\tNationalite: %s\n", (med + i)->forn.nationalite);
-                    printf("--------------------\n");
-                }
-            }
-            if (!found)
-            {
-                printf("Not found:\n");
-            }
-
-            break;
-        case 'b':
-            // cas d'affichage de tous les medicaments d'apres la categorie
-            printf("Entrer la categorie:\n");
-            rewind(stdin);
-            scanf("%s", s);
-            rewind(stdin);
-
-            for (i = 0; i < N; i++)
-            {
-                if (strcmp(s, (med + i)->categorie) == 0)
-                {
-                    found = true;
-                    printf("Medicament %d:\n", i + 1);
-                    printf("Code: %s\n", (med + i)->code);
-                    printf("Nom: %s\n", (med + i)->nom);
-                    printf("Categorie: %s\n", (med + i)->categorie);
-                    printf("Prix: %.2f\n", (med + i)->prix);
-                    printf("Quantite en stock: %u\n", (med + i)->quant_stock);
-                    printf("Fournisseur:\n");
-                    printf("\tCode Four: %d\n", (med + i)->forn.code);
-                    printf("\tNom: %s\n", (med + i)->forn.nom);
-                    printf("\tAdresse: %s\n", (med + i)->forn.adresse);
-                    printf("\tNationalite: %s\n", (med + i)->forn.nationalite);
-                    printf("--------------------\n");
-                }
-            }
-            if (!found)
-            {
-                printf("Not found:\n");
-            }
-
-            break;
-        case 'c':
-            // cas d'affichage de tous lesmedicaments d'apres le prix
-            float pr;
-            printf("Entrer le prix:\n");
-            rewind(stdin);
-            scanf("%f", &pr);
-            rewind(stdin);
-            for (i = 0; i < N; i++)
-            {
-                if (abs(pr - (med + i)->prix) < 1e-9)
-                {
-                    found = true;
-                    printf("Medicament %d:\n", i + 1);
-                    printf("Code: %s\n", (med + i)->code);
-                    printf("Nom: %s\n", (med + i)->nom);
-                    printf("Categorie: %s\n", (med + i)->categorie);
-                    printf("Prix: %.2f\n", (med + i)->prix);
-                    printf("Quantite en stock: %u\n", (med + i)->quant_stock);
-                    printf("Fournisseur:\n");
-                    printf("\tCode Four: %d\n", (med + i)->forn.code);
-                    printf("\tNom: %s\n", (med + i)->forn.nom);
-                    printf("\tAdresse: %s\n", (med + i)->forn.adresse);
-                    printf("\tNationalite: %s\n", (med + i)->forn.nationalite);
-                    printf("--------------------\n");
-                }
-            }
-            if (!found)
-            {
-                printf("Not found:\n");
-            }
-            break;
-        default:
-            printf("Erreur Choix INVALIDE\n");
-            break;
-        }
-        break;
-    case 4:
-        // 4eme cas d'ajout d'un medicament
-        medicament med1;
-        printf("Entrer :\na-Au debut du tableau\nb-A la fin du tableau\nc-En une position a votre choix\nd-Apres le 2eme medicament de meme categorie\n");
-        rewind(stdin);
-        scanf(" %c", &c);
-        rewind(stdin);
-        init(1, &med1);
-        switch (c)
-        {
-        case 'a':
-            med = (medicament *)realloc(med, (N + 1) * sizeof(medicament));
-            for (i = N; i > 0; i--)
-            {
-                *(med + i) = *(med + i - 1);
-            }
-            *med = med1;
-            (N)++;
-            for (int i = 0; i < N; i++)
-            {
-                printf("Medicament %d:\n", i + 1);
-                printf("Code: %s\n", (med + i)->code);
-                printf("Nom: %s\n", (med + i)->nom);
-                printf("Categorie: %s\n", (med + i)->categorie);
-                printf("Prix: %.2f\n", (med + i)->prix);
-                printf("Quantite en stock: %u\n", (med + i)->quant_stock);
-                printf("Fournisseur:\n");
-                printf("\tCode Four: %d\n", (med + i)->forn.code);
-                printf("\tNom: %s\n", (med + i)->forn.nom);
-                printf("\tAdresse: %s\n", (med + i)->forn.adresse);
-                printf("\tNationalite: %s\n", (med + i)->forn.nationalite);
-                printf("--------------------\n");
-                somme_med_valable += (med + i)->quant_stock;
-            }
-
-            break;
-        case 'b':
-            med = (medicament *)realloc(med, (N + 1) * sizeof(medicament));
-            *(med + N) = med1;
-            (N)++;
-            break;
-        case 'c':
-            printf("Veuiller donner la position ou vous voulez ajouter votre nouveau medicament:\n");
-            scanf("%d", &j);
-            med = (medicament *)realloc(med, (N + 1) * sizeof(medicament));
-            for (i = N; i > j; i--)
-            {
-                *(med + i) = *(med + i - 1);
-            }
-            *(med + j) = med1;
-            (N)++;
-            break;
-        case 'd':
-            char cat[10];
-            printf("Veuiller Entrer La Categorie:");
-            rewind(stdin);
-            scanf("%s", cat);
-            rewind(stdin);
-            med = (medicament *)realloc(med, (N + 1) * sizeof(medicament));
-            for (i = 0; i < N; i++)
-            {
-                if (strcmp(cat, (med + i)->categorie) == 0)
-                {
-                    j++;
-                }
-                if (j == 2)
-                {
-                    break;
-                }
-            }
-            j = i + 1;
-            for (i = N; i > j; i++)
-            {
-                *(med + i) = *(med + i - 1);
-            }
-            *(med + j) = med1;
-            (N)++;
-            break;
-        default:
-            printf("Erreur Choix INVALIDE\n");
-            break;
-        }
-        break;
-    case 5:
-        // 5eme cas de supression d'un medicament
-        printf("Entrer :\na-Au debut du tableau\nb-A la fin du tableau\nc-En une position a votre choix\nd-Par Nom Du Medicament\ne-Par fournisseur\nf-Dont nom du fournisseur termine par une lettre donne:\n");
-        rewind(stdin);
-        scanf("%c", &c);
-        rewind(stdin);
-        switch (c)
-        {
-        case 'a':
-            temp = *(med + N);
-            *(med + N) = *med;
-            *med = temp;
-            med = (medicament *)realloc(med, (N - 1) * sizeof(medicament));
-            (N)--;
-            break;
-        case 'b':
-            med = (medicament *)realloc(med, (N - 1) * sizeof(medicament));
-            (N)--;
-            break;
-        case 'c':
-            printf("Entrer votre position:\n");
-            scanf("%d", &j);
-            temp = *(med + N);
-            *(med + N) = *(med + j);
-            *(med + j) = temp;
-            med = (medicament *)realloc(med, (N - 1) * sizeof(medicament));
-            (N)--;
-            break;
-        case 'd':
-            printf("Entrer le nom du medicament:");
-            scanf("%s", s);
-            for (i = 0; i < N; i++)
-            {
-                if (strcmp((med + i)->nom, s) == 0)
-                {
-                    j = i;
-                    break;
-                }
-            }
-            temp = *(med + N);
-            *(med + N) = *(med + j);
-            *(med + j) = temp;
-            med = (medicament *)realloc(med, (N - 1) * sizeof(medicament));
-            (N)--;
-            break;
-        case 'e':
-            printf("Entrer le code du fournisseur:\n");
-            scanf("%d", j);
-            for (i = 0; i < N; i++)
-            {
-                if (j == (med + i)->forn.code)
-                {
-                    j = i;
-                    break;
-                }
-            }
-            temp = *(med + N);
-            *(med + N) = *(med + j);
-            *(med + j) = temp;
-            med = (medicament *)realloc(med, (N - 1) * sizeof(medicament));
-            (N)--;
-            break;
-        case 'f':
-            printf("Entrer la lettre souhaiter:\n");
-            scanf("%c", &c);
-            i = 0;
-            while (i < N)
-            {
-                if (c == (med + i)->forn.nom[strlen((med + i)->forn.nom) - 1])
-                {
-                    j = i;
-                    temp = *(med + N);
-                    *(med + N) = *(med + j);
-                    *(med + j) = temp;
-                    med = (medicament *)realloc(med, (N - 1) * sizeof(medicament));
-                    (N)--;
-                    i = 0;
-                }
-                i++;
-            }
-            break;
-        default:
-            printf("Erreur Choix INVALIDE\n\n");
-            break;
-        }
-        break;
-    case 6:
-        break;
-    default:
-        printf("Erreur Choix INVALIDE\n");
-        break;
-    }
-    free(s);
 }
 
 void upper_everything(char *s)
@@ -407,11 +84,11 @@ void upper_everything(char *s)
     }
 }
 
-bool is_code_unique(char *s, medicament *med, int N)
+bool is_code_unique(char *s, medicament *t, int N)
 {
     for (int i = 0; i < N; i++)
     {
-        if (strcmp(s, (med + i)->code) == 0)
+        if (strcmp(s, (t + i)->code) == 0)
         {
             return false;
         }
@@ -433,55 +110,93 @@ void code_unique(char *s)
     *(s + 9) = '\0';
 }
 // fontion d'initialisation
-void init(int N, medicament *med)
+void init(int N, medicament *t)
 {
-    int i;
-    for (i = 0; i < N; i++)
+    for (int i = 0; i < N; i++)
     {
         printf("Le Nom du Medicament : ");
-        rewind(stdin);
-        scanf("%s", (med + i)->nom);
-        printf("\t categorie: ");
-        rewind(stdin);
-        scanf("%s", (med + i)->categorie);
-        printf("\t le prix: ");
-        rewind(stdin);
-        scanf("%f", &(med + i)->prix);
-        printf("\t la quantite: ");
-        rewind(stdin);
-        scanf("%u", &(med + i)->quant_stock);
-        rewind(stdin);
+        scanf("%s", (t + i)->nom);
+
+        printf("\t Categorie: ");
+        scanf("%s", (t + i)->categorie);
+
+        printf("\t Le prix: ");
+        while (1)
+        {
+            if (scanf("%f", &(t + i)->prix) == 1 && (t + i)->prix >= 0)
+            {
+                break;
+            }
+            else
+            {
+                printf("entrer un prix > 0: ");
+                while (getchar() != '\n')
+                    ;
+            }
+        }
+
+        printf("\t La quantite: ");
+        while (1)
+        {
+            if (scanf("%u", &(t + i)->quant_stock) == 1)
+            {
+                break;
+            }
+            else
+            {
+                printf("entrer un prix > 0: ");
+                while (getchar() != '\n')
+                    ;
+            }
+        }
+
         printf("\t Nom fournisseur: ");
-        rewind(stdin);
-        scanf("%s", (med + i)->forn.nom);
+        scanf("%s", (t + i)->forn.nom);
+
         printf("\t Adresse du fournisseur: ");
-        rewind(stdin);
-        scanf("%s", (med + i)->forn.adresse);
+        scanf("%s", (t + i)->forn.adresse);
+
         printf("\t Nationalite: ");
-        rewind(stdin);
-        scanf("%s", (med + i)->forn.nationalite);
-        rewind(stdin);
-        upper_everything((med + i)->nom);
-        upper_everything((med + i)->categorie);
-        upper_everything((med + i)->forn.nom);
+        scanf("%s", (t + i)->forn.nationalite);
+
+        upper_everything((t + i)->nom);
+        upper_everything((t + i)->categorie);
+        upper_everything((t + i)->forn.nom);
+
         do
         {
-            code_unique((med + i)->code);
-        } while (!is_code_unique((med + i)->code, med, i));
+            code_unique((t + i)->code);
+        } while (!is_code_unique((t + i)->code, t, i));
 
-        (med + i)->forn.code = rand() % RAND_MAX;
+        (t + i)->forn.code = rand();
     }
+}
+
+void affiche_stock(int N, medicament *t)
+{
+
+    int somme_med_valable = 0;
+
+    printf("Stock details:\n");
 
     for (int i = 0; i < N; i++)
     {
-        for (int j = i + 1; j < N; j++)
-        {
-            if ((strcmp((med + i)->nom, (med + j)->nom)) == 0)
-            {
-                strcpy((med + j)->code, (med + i)->code);
-            }
-        }
+        printf("Medicament %d:\n", i + 1);
+        printf("Code: %s\n", (t + i)->code);
+        printf("Nom: %s\n", (t + i)->nom);
+        printf("Categorie: %s\n", (t + i)->categorie);
+        printf("Prix: %.2f\n", (t + i)->prix);
+        printf("Quantite en stock: %u\n", (t + i)->quant_stock);
+        printf("Fournisseur:\n");
+        printf("\tCode Four: %d\n", (t + i)->forn.code);
+        printf("\tNom: %s\n", (t + i)->forn.nom);
+        printf("\tAdresse: %s\n", (t + i)->forn.adresse);
+        printf("\tNationalite: %s\n", (t + i)->forn.nationalite);
+        printf("--------------------\n");
+        somme_med_valable += (t + i)->quant_stock;
     }
+    printf("La somme des medicaments valable est:%d\n", somme_med_valable);
+    
 }
 
 int main()
@@ -493,7 +208,14 @@ int main()
     scanf("%d", &N);
     medicament *t = malloc(N * sizeof(medicament));
     init(N, t);
-
+    int j = 0;
+    char c;
+    char s[10];
+    medicament temp;
+    medicament med1 = {0};
+    float pr = 0;
+    char cat[10] = {0};
+    int i = 0;
     do
     {
         printf("********Menu De Gestion********\n");
@@ -508,7 +230,293 @@ int main()
         rewind(stdin);
         scanf("%d", &choix);
         rewind(stdin);
-        affichage(choix, t);
+        switch (choix)
+        {
+        case 1:
+            // premier cas si l'utilisateur entre la valeur 1
+            affiche_stock(N,t);
+            break;
+        case 2:
+            // 2eme cas si l'utilisateur entre le nombre 2
+            affiche_min_categ(N, t);
+            break;
+        case 3:
+            // 3eme cas si l'utilisateur entre le nombre 3
+            printf("Entrer :\na-D'apres le fournisseur donnee\nb-D'apres ca categorie donnee\nc-D'apres le prix\n");
+            rewind(stdin);
+            bool found = false;
+            scanf("%c", &c);
+            rewind(stdin);
+            switch (c)
+            {
+            case 'a':
+                // cas d'affichage de tous lesmedicaments d'apres un fournisseur
+                printf("Entrer le nom du fournisseur:\n");
+                scanf("%s", s);
+                rewind(stdin);
+                upper_everything(s);
+                assert(s != 0);
+                for (i = 0; i < N; i++)
+                {
+                    if (strcmp(s, (t + i)->forn.nom) == 0)
+                    {
+                        found = true;
+                        printf("Medicament %d:\n", i + 1);
+                        printf("Code: %s\n", (t + i)->code);
+                        printf("Nom: %s\n", (t + i)->nom);
+                        printf("Categorie: %s\n", (t + i)->categorie);
+                        printf("Prix: %.2f\n", (t + i)->prix);
+                        printf("Quantite en stock: %u\n", (t + i)->quant_stock);
+                        printf("Fournisseur:\n");
+                        printf("\tCode Four: %d\n", (t + i)->forn.code);
+                        printf("\tNom: %s\n", (t + i)->forn.nom);
+                        printf("\tAdresse: %s\n", (t + i)->forn.adresse);
+                        printf("\tNationalite: %s\n", (t + i)->forn.nationalite);
+                        printf("--------------------\n");
+                    }
+                }
+                if (!found)
+                {
+                    printf("Not found:\n");
+                }
+
+                break;
+            case 'b':
+                // cas d'affichage de tous les medicaments d'apres la categorie
+                printf("Entrer la categorie:\n");
+                rewind(stdin);
+                scanf("%s", s);
+                rewind(stdin);
+                assert(s != 0);
+                for (i = 0; i < N; i++)
+                {
+                    if (strcmp(s, (t + i)->categorie) == 0)
+                    {
+                        found = true;
+                        printf("Medicament %d:\n", i + 1);
+                        printf("Code: %s\n", (t + i)->code);
+                        printf("Nom: %s\n", (t + i)->nom);
+                        printf("Categorie: %s\n", (t + i)->categorie);
+                        printf("Prix: %.2f\n", (t + i)->prix);
+                        printf("Quantite en stock: %u\n", (t + i)->quant_stock);
+                        printf("Fournisseur:\n");
+                        printf("\tCode Four: %d\n", (t + i)->forn.code);
+                        printf("\tNom: %s\n", (t + i)->forn.nom);
+                        printf("\tAdresse: %s\n", (t + i)->forn.adresse);
+                        printf("\tNationalite: %s\n", (t + i)->forn.nationalite);
+                        printf("--------------------\n");
+                    }
+                }
+                if (!found)
+                {
+                    printf("Not found:\n");
+                }
+
+                break;
+            case 'c':
+                // cas d'affichage de tous lesmedicaments d'apres le prix
+                printf("Entrer le prix:\n");
+                rewind(stdin);
+                scanf("%f", &pr);
+                rewind(stdin);
+                for (i = 0; i < N; i++)
+                {
+                    if ((float)abs(pr - (t + i)->prix) < 1e-9)
+                    {
+                        found = true;
+                        printf("Medicament %d:\n", i + 1);
+                        printf("Code: %s\n", (t + i)->code);
+                        printf("Nom: %s\n", (t + i)->nom);
+                        printf("Categorie: %s\n", (t + i)->categorie);
+                        printf("Prix: %.2f\n", (t + i)->prix);
+                        printf("Quantite en stock: %u\n", (t + i)->quant_stock);
+                        printf("Fournisseur:\n");
+                        printf("\tCode Four: %d\n", (t + i)->forn.code);
+                        printf("\tNom: %s\n", (t + i)->forn.nom);
+                        printf("\tAdresse: %s\n", (t + i)->forn.adresse);
+                        printf("\tNationalite: %s\n", (t + i)->forn.nationalite);
+                        printf("--------------------\n");
+                    }
+                }
+                if (!found)
+                {
+                    printf("Not found:\n");
+                }
+                break;
+            default:
+                printf("Erreur Choix INVALIDE\n");
+                break;
+            }
+            break;
+        case 4:
+            // 4eme cas d'ajout d'un medicament
+
+            printf("Entrer :\na-Au debut du tableau\nb-A la fin du tableau\nc-En une position a votre choix\nd-Apres le 2eme medicament de meme categorie\n");
+            rewind(stdin);
+            scanf("%c", &c);
+            rewind(stdin);
+            init(1, &med1);
+            medicament *temp2;
+            switch (c)
+            {
+            case 'a':
+                temp2 = (medicament *)realloc(t, (N + 1) * sizeof(medicament));
+                assert(temp2 != NULL);
+                t = temp2;
+                for (i = N; i > 0; i--)
+                {
+                    *(t + i) = *(t + i - 1);
+                }
+                *t = med1;
+                (N)++;
+
+                break;
+            case 'b':
+                temp2 = (medicament *)realloc(t, (N + 1) * sizeof(medicament));
+                t = temp2;
+                assert(t != NULL);
+                *(t + N) = med1;
+                (N)++;
+                break;
+            case 'c':
+                printf("Veuiller donner la position ou vous voulez ajouter votre nouveau medicament:\n");
+                scanf("%d", &j);
+                rewind(stdin);
+                temp2 = (medicament *)realloc(t, (N + 1) * sizeof(medicament));
+                t = temp2;
+                assert(t != NULL);
+                for (i = N; i >= j; i--)
+                {
+                    *(t + i) = *(t + i - 1);
+                }
+                *(t + j) = med1;
+                (N)++;
+                break;
+            case 'd':
+                printf("Veuiller Entrer La Categorie:");
+                rewind(stdin);
+                scanf("%10s", cat);
+                rewind(stdin);
+                temp2 = (medicament *)realloc(t, (N + 1) * sizeof(medicament));
+                t = temp2;
+                assert(t != NULL);
+                for (i = 0; i < N; i++)
+                {
+                    if (strcmp(cat, (t + i)->categorie) == 0)
+                    {
+                        j++;
+                    }
+                    if (j == 2)
+                    {
+                        break;
+                    }
+                }
+                j = i + 1;
+                for (i = N; i > j; i++)
+                {
+                    *(t + i) = *(t + i - 1);
+                }
+                *(t + j) = med1;
+                (N)++;
+                break;
+            default:
+                printf("Erreur Choix INVALIDE\n");
+                break;
+            }
+            break;
+        case 5:
+            // 5eme cas de supression d'un medicament
+            printf("Entrer :\na-Au debut du tableau\nb-A la fin du tableau\nc-En une position a votre choix\nd-Par Nom Du Medicament\ne-Par fournisseur\nf-Dont nom du fournisseur termine par une lettre donne:\n");
+            rewind(stdin);
+            scanf("%c", &c);
+            rewind(stdin);
+            switch (c)
+            {
+            case 'a':
+                temp = *(t + N);
+                *(t + N) = *t;
+                *t = temp;
+                t = (medicament *)realloc(t, (N - 1) * sizeof(medicament));
+                (N)--;
+                break;
+            case 'b':
+                t = (medicament *)realloc(t, (N - 1) * sizeof(medicament));
+                (N)--;
+                break;
+            case 'c':
+                printf("Entrer votre position:\n");
+                scanf("%d", &j);
+                temp = *(t + N);
+                *(t + N) = *(t + j);
+                *(t + j) = temp;
+                t = (medicament *)realloc(t, (N - 1) * sizeof(medicament));
+                (N)--;
+                break;
+            case 'd':
+                printf("Entrer le nom du medicament:");
+                scanf("%s", s);
+                for (i = 0; i < N; i++)
+                {
+                    if (strcmp((t + i)->nom, s) == 0)
+                    {
+                        j = i;
+                        break;
+                    }
+                }
+                temp = *(t + N);
+                *(t + N) = *(t + j);
+                *(t + j) = temp;
+                t = (medicament *)realloc(t, (N - 1) * sizeof(medicament));
+                (N)--;
+                break;
+            case 'e':
+                printf("Entrer le code du fournisseur:\n");
+                scanf("%d", &j);
+                for (i = 0; i < N; i++)
+                {
+                    if (j == (t + i)->forn.code)
+                    {
+                        j = i;
+                        break;
+                    }
+                }
+                temp = *(t + N);
+                *(t + N) = *(t + j);
+                *(t + j) = temp;
+                t = (medicament *)realloc(t, (N - 1) * sizeof(medicament));
+                (N)--;
+                break;
+            case 'f':
+                printf("Entrer la lettre souhaiter:\n");
+                scanf("%c", &c);
+                i = 0;
+                while (i < N)
+                {
+                    if (c == (t + i)->forn.nom[strlen((t + i)->forn.nom) - 1])
+                    {
+                        j = i;
+                        temp = *(t + N);
+                        *(t + N) = *(t + j);
+                        *(t + j) = temp;
+                        t = (medicament *)realloc(t, (N - 1) * sizeof(medicament));
+                        (N)--;
+                        i = 0;
+                    }
+                    i++;
+                }
+                break;
+            default:
+                printf("Erreur Choix INVALIDE\n\n");
+                break;
+            }
+            break;
+        case 6:
+            break;
+        default:
+            printf("Erreur Choix INVALIDE\n");
+            break;
+        }
+
         rewind(stdin);
         if (choix == 6)
             quit = true;
