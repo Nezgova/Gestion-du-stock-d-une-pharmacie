@@ -4,7 +4,6 @@
 #include <string.h>
 #include <ctype.h>
 #include <time.h>
-#include <stdbool.h>
 #include <assert.h>
 
 int N;
@@ -196,7 +195,6 @@ void affiche_stock(int N, medicament *t)
         somme_med_valable += (t + i)->quant_stock;
     }
     printf("La somme des medicaments valable est:%d\n", somme_med_valable);
-    
 }
 
 int main()
@@ -234,7 +232,7 @@ int main()
         {
         case 1:
             // premier cas si l'utilisateur entre la valeur 1
-            affiche_stock(N,t);
+            affiche_stock(N, t);
             break;
         case 2:
             // 2eme cas si l'utilisateur entre le nombre 2
@@ -286,6 +284,7 @@ int main()
                 printf("Entrer la categorie:\n");
                 rewind(stdin);
                 scanf("%s", s);
+                upper_everything(s);
                 rewind(stdin);
                 assert(s != 0);
                 for (i = 0; i < N; i++)
@@ -380,12 +379,16 @@ int main()
                 break;
             case 'c':
                 printf("Veuiller donner la position ou vous voulez ajouter votre nouveau medicament:\n");
-                scanf("%d", &j);
+                do
+                {
+                    scanf("%d", &j);
+                } while (j < 1 || j > N + 1);
                 rewind(stdin);
                 temp2 = (medicament *)realloc(t, (N + 1) * sizeof(medicament));
                 t = temp2;
                 assert(t != NULL);
-                for (i = N; i >= j; i--)
+                j--;
+                for (i = N; i > j; i--)
                 {
                     *(t + i) = *(t + i - 1);
                 }
@@ -393,6 +396,7 @@ int main()
                 (N)++;
                 break;
             case 'd':
+                j = 0;
                 printf("Veuiller Entrer La Categorie:");
                 rewind(stdin);
                 scanf("%10s", cat);
@@ -433,9 +437,12 @@ int main()
             switch (c)
             {
             case 'a':
-                temp = *(t + N);
-                *(t + N) = *t;
-                *t = temp;
+
+                for (int i = 0; i < N - 1; i++)
+                {
+                    *(t + i) = *(t + i + 1);
+                }
+
                 t = (medicament *)realloc(t, (N - 1) * sizeof(medicament));
                 (N)--;
                 break;
@@ -445,16 +452,27 @@ int main()
                 break;
             case 'c':
                 printf("Entrer votre position:\n");
-                scanf("%d", &j);
-                temp = *(t + N);
-                *(t + N) = *(t + j);
-                *(t + j) = temp;
+                do
+                {
+                    scanf("%d", &j);
+                } while (j < 1 || j > N + 1);
+
+                j--;
+
+                for (int k = j; k < N - 1; k++)
+                {
+                    *(t + k) = *(t + k + 1);
+                }
+
                 t = (medicament *)realloc(t, (N - 1) * sizeof(medicament));
                 (N)--;
                 break;
             case 'd':
+                j = -1;
                 printf("Entrer le nom du medicament:");
                 scanf("%s", s);
+                rewind(stdin);
+                upper_everything(s);
                 for (i = 0; i < N; i++)
                 {
                     if (strcmp((t + i)->nom, s) == 0)
@@ -463,46 +481,86 @@ int main()
                         break;
                     }
                 }
-                temp = *(t + N);
-                *(t + N) = *(t + j);
-                *(t + j) = temp;
-                t = (medicament *)realloc(t, (N - 1) * sizeof(medicament));
-                (N)--;
+                if (j != -1)
+                {
+                    for (int k = j; k < N - 1; k++)
+                    {
+                        *(t + k) = *(t + k + 1);
+                    }
+                    t = (medicament *)realloc(t, (N - 1) * sizeof(medicament));
+                    (N)--;
+                }
+                else
+                {
+                    printf("pas de med : %s\n", s);
+                }
+
                 break;
             case 'e':
+                j = -1;
                 printf("Entrer le code du fournisseur:\n");
-                scanf("%d", &j);
+                int code_f;
+                scanf("%d", &code_f);
+                rewind(stdin);
+
                 for (i = 0; i < N; i++)
                 {
-                    if (j == (t + i)->forn.code)
+                    if (code_f == (t + i)->forn.code)
                     {
                         j = i;
                         break;
                     }
                 }
-                temp = *(t + N);
-                *(t + N) = *(t + j);
-                *(t + j) = temp;
-                t = (medicament *)realloc(t, (N - 1) * sizeof(medicament));
-                (N)--;
+                if (j != -1)
+                {
+                    for (int k = j; k < N - 1; k++)
+                    {
+                        *(t + k) = *(t + k + 1);
+                    }
+                    t = (medicament *)realloc(t, (N - 1) * sizeof(medicament));
+                    (N)--;
+                }
+                else
+                {
+                    printf("code not found: \n");
+                }
+
                 break;
             case 'f':
+                char lettre = 0;
                 printf("Entrer la lettre souhaiter:\n");
-                scanf("%c", &c);
-                i = 0;
-                while (i < N)
+                scanf("%c", &lettre);
+                rewind(stdin);
+                int nombre_suppr = 0;
+                lettre == toupper(lettre);
+                
+                for (int i = 0; i < N; i++)
                 {
-                    if (c == (t + i)->forn.nom[strlen((t + i)->forn.nom) - 1])
+                    char last_Letter = (t + i)->forn.nom[strlen((t + i)->forn.nom) - 1];
+
+                    if (last_Letter == lettre)
                     {
-                        j = i;
-                        temp = *(t + N);
-                        *(t + N) = *(t + j);
-                        *(t + j) = temp;
+                        for (int k = i; k < N - 1; k++)
+                        {
+                            *(t+k) = *(t + k + 1);
+                        }
+
                         t = (medicament *)realloc(t, (N - 1) * sizeof(medicament));
+                        assert(t != NULL);
+
                         (N)--;
-                        i = 0;
+                        nombre_suppr++;
+                        i--;
                     }
-                    i++;
+                }
+
+                if (nombre_suppr > 0)
+                {
+                    printf("%d medic supprimer\n", nombre_suppr);
+                }
+                else
+                {
+                    printf("No medicament trouve.\n");
                 }
                 break;
             default:

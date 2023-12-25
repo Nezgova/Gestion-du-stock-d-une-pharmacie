@@ -18,5 +18,9 @@
         "titleBar.inactiveBackground": "#f7d0d099",
         "titleBar.inactiveForeground": "#15202b99"
     },
-    "peacock.color": "#f7d0d0"
+    "peacock.color": "#f7d0d0",
+    "files.associations": {
+        "string.h": "c",
+        "ctype.h": "c"
+    }
 }
