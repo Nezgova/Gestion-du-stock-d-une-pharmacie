@@ -27,7 +27,7 @@ typedef struct
 
 } medicament;
 void upper_everything(char *s);
-void init(int n, medicament *t);
+void init(int n, medicament *t, bool have_cat);
 void code_unique(char *s);
 
 void affiche_min_categ(int N, medicament *t)
@@ -110,15 +110,17 @@ void code_unique(char *s)
     *(s + 9) = '\0';
 }
 // fontion d'initialisation
-void init(int N, medicament *t)
+void init(int N, medicament *t, bool have_cat)
 {
     for (int i = 0; i < N; i++)
     {
         printf("Le Nom du Medicament : ");
         scanf("%s", (t + i)->nom);
-
-        printf("\t Categorie: ");
-        scanf("%s", (t + i)->categorie);
+        if (!have_cat)
+        {
+            printf("\t Categorie: ");
+            scanf("%s", (t + i)->categorie);
+        }
 
         printf("\t Le prix: ");
         while (1)
@@ -219,7 +221,7 @@ int main()
     printf("Entrer un entier N :");
     scanf("%d", &N);
     medicament *t = malloc(N * sizeof(medicament));
-    init(N, t);
+    init(N, t, false);
     int j = 0;
     char c;
     char s[10];
@@ -380,7 +382,7 @@ int main()
                     *(t + i) = *(t + i - 1);
                 }
                 printf("Entrer un nouveau med :\n");
-                init(1, t);
+                init(1, t, false);
                 cmp_codes_name(N, t);
                 (N)++;
 
@@ -390,7 +392,7 @@ int main()
                 t = temp2;
                 assert(t != NULL);
                 printf("Entrer un nouveau med :\n");
-                init(1, t + N);
+                init(1, t + N,false);
                 cmp_codes_name(N, t);
                 (N)++;
                 break;
@@ -410,7 +412,7 @@ int main()
                     *(t + i) = *(t + i - 1);
                 }
                 printf("Entrer un nouveau med :\n");
-                init(1, t + j);
+                init(1, t + j,false);
                 cmp_codes_name(N, t);
                 (N)++;
                 break;
@@ -445,12 +447,12 @@ int main()
 
                     for (int i = N; i > pos; i--)
                     {
-                        *(t+i) = *(t+i - 1);
+                        *(t + i) = *(t + i - 1);
                     }
 
-                    init(1, t + pos);
+                    init(1, t + pos, true);
+                    strcpy((t + pos)->categorie,cat);
                     cmp_codes_name(N, t);
-
 
                     (N)++;
                 }
