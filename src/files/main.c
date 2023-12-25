@@ -607,15 +607,12 @@ int main()
             }
             break;
         case 6:
+            quit = true;
             break;
         default:
             printf("Erreur Choix INVALIDE\n");
             break;
         }
-
-        rewind(stdin);
-        if (choix == 6)
-            quit = true;
 
     } while (!quit);
     free(t);
