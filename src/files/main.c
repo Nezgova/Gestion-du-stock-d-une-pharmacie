@@ -81,6 +81,7 @@ void upper_everything(char *s)
     {
         *(s + i) = toupper(*(s + i));
     }
+    *(s + strlen(s)) = '\0';
 }
 
 bool is_code_unique(char *s, medicament *t, int N)
@@ -196,7 +197,20 @@ void affiche_stock(int N, medicament *t)
     }
     printf("La somme des medicaments valable est:%d\n", somme_med_valable);
 }
+void cmp_codes_name(int N, medicament *t)
+{
 
+    for (int i = 0; i < N - 1; i++)
+    {
+        for (int j = i + 1; j < N; j++)
+        {
+            if (strcmp((t + i)->nom, (t + j)->nom) == 0)
+            {
+                strcpy((t + j)->code, (t + i)->code);
+            }
+        }
+    }
+}
 int main()
 {
     srand(time(NULL));
@@ -354,7 +368,6 @@ int main()
             rewind(stdin);
             scanf("%c", &c);
             rewind(stdin);
-            init(1, &med1);
             medicament *temp2;
             switch (c)
             {
@@ -366,7 +379,9 @@ int main()
                 {
                     *(t + i) = *(t + i - 1);
                 }
-                *t = med1;
+                printf("Entrer un nouveau med :\n");
+                init(1, t);
+                cmp_codes_name(N, t);
                 (N)++;
 
                 break;
@@ -374,7 +389,9 @@ int main()
                 temp2 = (medicament *)realloc(t, (N + 1) * sizeof(medicament));
                 t = temp2;
                 assert(t != NULL);
-                *(t + N) = med1;
+                printf("Entrer un nouveau med :\n");
+                init(1, t + N);
+                cmp_codes_name(N, t);
                 (N)++;
                 break;
             case 'c':
@@ -382,7 +399,7 @@ int main()
                 do
                 {
                     scanf("%d", &j);
-                } while (j < 1 || j > N + 1);
+                } while (j < 1 || j > N);
                 rewind(stdin);
                 temp2 = (medicament *)realloc(t, (N + 1) * sizeof(medicament));
                 t = temp2;
@@ -392,36 +409,55 @@ int main()
                 {
                     *(t + i) = *(t + i - 1);
                 }
-                *(t + j) = med1;
+                printf("Entrer un nouveau med :\n");
+                init(1, t + j);
+                cmp_codes_name(N, t);
                 (N)++;
                 break;
             case 'd':
                 j = 0;
                 printf("Veuiller Entrer La Categorie:");
                 rewind(stdin);
-                scanf("%10s", cat);
+                scanf("%9s", cat);
                 rewind(stdin);
-                temp2 = (medicament *)realloc(t, (N + 1) * sizeof(medicament));
-                t = temp2;
-                assert(t != NULL);
-                for (i = 0; i < N; i++)
+                upper_everything(cat);
+
+                int CMB_CAT = 0;
+                int pos = -1;
+
+                for (int i = 0; i < N; i++)
                 {
                     if (strcmp(cat, (t + i)->categorie) == 0)
                     {
-                        j++;
-                    }
-                    if (j == 2)
-                    {
-                        break;
+                        CMB_CAT++;
+                        if (CMB_CAT == 2)
+                        {
+                            pos = i + 1;
+                            break;
+                        }
                     }
                 }
-                j = i + 1;
-                for (i = N; i > j; i++)
+
+                if (CMB_CAT >= 2)
                 {
-                    *(t + i) = *(t + i - 1);
+                    t = (medicament *)realloc(t, (N + 1) * sizeof(medicament));
+                    assert(t != NULL);
+
+                    for (int i = N; i > pos; i--)
+                    {
+                        *(t+i) = *(t+i - 1);
+                    }
+
+                    init(1, t + pos);
+                    cmp_codes_name(N, t);
+
+
+                    (N)++;
                 }
-                *(t + j) = med1;
-                (N)++;
+                else
+                {
+                    printf("il n'ya pas assez de med de meme cat: .\n");
+                }
                 break;
             default:
                 printf("Erreur Choix INVALIDE\n");
@@ -455,7 +491,7 @@ int main()
                 do
                 {
                     scanf("%d", &j);
-                } while (j < 1 || j > N + 1);
+                } while (j < 1 || j > N);
 
                 j--;
 
@@ -527,22 +563,22 @@ int main()
 
                 break;
             case 'f':
-                char lettre = 0;
                 printf("Entrer la lettre souhaiter:\n");
+                char lettre = 0;
                 scanf("%c", &lettre);
                 rewind(stdin);
                 int nombre_suppr = 0;
-                lettre == toupper(lettre);
-                
+                lettre = toupper(lettre);
+
                 for (int i = 0; i < N; i++)
                 {
-                    char last_Letter = (t + i)->forn.nom[strlen((t + i)->forn.nom) - 1];
+                    char last_Letter = *((t + i)->forn.nom + strlen((t + i)->forn.nom) - 1);
 
                     if (last_Letter == lettre)
                     {
                         for (int k = i; k < N - 1; k++)
                         {
-                            *(t+k) = *(t + k + 1);
+                            *(t + k) = *(t + k + 1);
                         }
 
                         t = (medicament *)realloc(t, (N - 1) * sizeof(medicament));
