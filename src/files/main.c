@@ -517,12 +517,14 @@ int main(int argc, char *argv[])
                 }
                 else if (page_selectionne_2 == NAV_PAGES_TEXTFIELD_PRIX)
                 {
+                    memset(PrixCHAR, 0, sizeof(PrixCHAR));
                     snprintf(PrixCHAR, sizeof(PrixCHAR), "%.2f", (t + counter_of_i)->prix);
                     handleEditableTextFieldEvents(NAV_PAGES_TEXTFIELD + 2, &event, PrixCHAR);
                     sscanf(PrixCHAR, "%f", &(t + counter_of_i)->prix);
                 }
                 else if (page_selectionne_2 == NAV_PAGES_TEXTFIELD_QUANTITY)
                 {
+                    memset(QuantiteCHAR, 0, sizeof(QuantiteCHAR));
                     snprintf(QuantiteCHAR, sizeof(QuantiteCHAR), "%u", (t + counter_of_i)->quant_stock);
                     handleEditableTextFieldEvents(NAV_PAGES_TEXTFIELD + 3, &event, QuantiteCHAR);
                     sscanf(QuantiteCHAR, "%u", &(t + counter_of_i)->quant_stock);
@@ -542,16 +544,16 @@ int main(int argc, char *argv[])
                 }
                 printf("s: %d\n", page_selectionne_2);
                     printf("Medicament %d:\n", counter_of_i);
-                        printf("Code: %s\n", (t + i)->code);
-                        printf("Nom: %s\n", (t + i)->nom);
-                        printf("Categorie: %s\n", (t + i)->categorie);
-                        printf("Prix: %.2f\n", (t + i)->prix);
-                        printf("Quantite en stock: %u\n", (t + i)->quant_stock);
+                        printf("Code: %s\n", (t + counter_of_i)->code);
+                        printf("Nom: %s\n", (t + counter_of_i)->nom);
+                        printf("Categorie: %s\n", (t + counter_of_i)->categorie);
+                        printf("Prix: %.2f\n", (t + counter_of_i)->prix);
+                        printf("Quantite en stock: %u\n", (t + counter_of_i)->quant_stock);
                         printf("Fournisseur:\n");
-                        printf("\tCode Four: %d\n", (t + i)->forn.code);
-                        printf("\tNom: %s\n", (t + i)->forn.nom);
-                        printf("\tAdresse: %s\n", (t + i)->forn.adresse);
-                        printf("\tNationalite: %s\n", (t + i)->forn.nationalite);
+                        printf("\tCode Four: %d\n", (t + counter_of_i)->forn.code);
+                        printf("\tNom: %s\n", (t + counter_of_i)->forn.nom);
+                        printf("\tAdresse: %s\n", (t + counter_of_i)->forn.adresse);
+                        printf("\tNationalite: %s\n", (t + counter_of_i)->forn.nationalite);
                         printf("--------------------\n");
                 
             }
