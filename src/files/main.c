@@ -344,6 +344,16 @@ bool return_to_main_menu(void *data)
 
     return true;
 }
+bool showfloat(void* data){
+    double * num = (double*)data;
+    printf("%.2f\n",*num);
+    return true;
+}
+bool showint(void* data){
+    int * num = (int*)data;
+    printf("%d\n",*num);
+    return true;
+}
 
 int main(int argc, char *argv[])
 {
@@ -389,17 +399,19 @@ int main(int argc, char *argv[])
     UITextField_t textfield_N = {.base = Page1[1], .font = TTF_OpenFont("../fonts/arial.ttf", 20), .text = "", .bgColor = {.a = 255, .r = 255, .g = 0, .b = 0}, .textColor = {.a = 255, .r = 55, .g = 40, .b = 15}, .isEditable = true};
     int numElements = sizeof(Page1) / sizeof(Page1[0]);
     int counter_of_i = 0;
-    UIElement_t NAV_PAGES[10] = {
+    assert((t + counter_of_i) != NULL);
+    UIElement_t NAV_PAGES[11] = {
         {.rect = {20, 20, 50, 50}, .border_radius = 0, .onClick = return_to_main_menu, .onClickData = &states, .texture = NULL},
         {.rect = {375, 570, 30, 30}, .border_radius = 0, .onClick = iteration_left_onclick, .onClickData = &counter_of_i, .texture = NULL},
         {.rect = {575, 570, 30, 30}, .border_radius = 0, .onClick = iteration_right_onclick, .onClickData = &counter_of_i, .texture = NULL},
         {.rect = {260, 100, 300, 30}, .border_radius = 2, .onClick = textfieldOnClick, .onClickData = (t + counter_of_i)->nom, .texture = NULL},
         {.rect = {130, 170, 100, 30}, .border_radius = 2, .onClick = textfieldOnClick, .onClickData = (t + counter_of_i)->categorie, .texture = NULL},
-        {.rect = {100, 240, 100, 30}, .border_radius = 2, .onClick = textfieldOnClick, .onClickData = &(t + counter_of_i)->prix, .texture = NULL},
-        {.rect = {140, 310, 100, 30}, .border_radius = 2, .onClick = textfieldOnClick, .onClickData = &(t + counter_of_i)->quant_stock, .texture = NULL},
+        {.rect = {100, 240, 100, 30}, .border_radius = 2, .onClick = showfloat, .onClickData = &(t + counter_of_i)->prix, .texture = NULL},
+        {.rect = {140, 310, 100, 30}, .border_radius = 2, .onClick = showint, .onClickData = &(t + counter_of_i)->quant_stock, .texture = NULL},
         {.rect = {190, 380, 100, 30}, .border_radius = 2, .onClick = textfieldOnClick, .onClickData = (t + counter_of_i)->forn.nom, .texture = NULL},
         {.rect = {250, 450, 100, 30}, .border_radius = 2, .onClick = textfieldOnClick, .onClickData = (t + counter_of_i)->forn.adresse, .texture = NULL},
         {.rect = {130, 520, 100, 30}, .border_radius = 2, .onClick = textfieldOnClick, .onClickData = (t + counter_of_i)->forn.nationalite, .texture = NULL},
+        {.rect = {405, 570, 170, 30}, .border_radius = 3, .onClick = NULL, .onClickData = NULL, .texture = NULL},
 
     };
 
@@ -410,7 +422,7 @@ int main(int argc, char *argv[])
 
     };
 
-    UITextField_t NAV_PAGES_TEXTFIELD[7] = {
+    UITextField_t NAV_PAGES_TEXTFIELD[8] = {
         {.base = NAV_PAGES[3], .font = textfield_N.font, .bgColor = {.a = 255, .r = 200, .g = 10, .b = 20}, .isEditable = false, .textColor = {.a = 255, .r = 55, .g = 40, .b = 15}, .text = ""},
         {.base = NAV_PAGES[4], .font = textfield_N.font, .bgColor = {.a = 255, .r = 200, .g = 10, .b = 20}, .isEditable = false, .textColor = {.a = 255, .r = 55, .g = 40, .b = 15}, .text = ""},
         {.base = NAV_PAGES[5], .font = textfield_N.font, .bgColor = {.a = 255, .r = 200, .g = 10, .b = 20}, .isEditable = false, .textColor = {.a = 255, .r = 55, .g = 40, .b = 15}, .text = ""},
@@ -418,6 +430,7 @@ int main(int argc, char *argv[])
         {.base = NAV_PAGES[7], .font = textfield_N.font, .bgColor = {.a = 255, .r = 200, .g = 10, .b = 20}, .isEditable = false, .textColor = {.a = 255, .r = 55, .g = 40, .b = 15}, .text = ""},
         {.base = NAV_PAGES[8], .font = textfield_N.font, .bgColor = {.a = 255, .r = 200, .g = 10, .b = 20}, .isEditable = false, .textColor = {.a = 255, .r = 55, .g = 40, .b = 15}, .text = ""},
         {.base = NAV_PAGES[9], .font = textfield_N.font, .bgColor = {.a = 255, .r = 200, .g = 10, .b = 20}, .isEditable = false, .textColor = {.a = 255, .r = 55, .g = 40, .b = 15}, .text = ""},
+        {.base = NAV_PAGES[10], .font = textfield_N.font, .bgColor = {.a = 255, .r = 200, .g = 210, .b = 20}, .isEditable = false, .textColor = {.a = 255, .r = 55, .g = 40, .b = 15}, .text = ""},
 
     };
     SDL_Color grey = {.r = 107, .g = 107, .b = 107, .a = 255};
@@ -509,54 +522,104 @@ int main(int argc, char *argv[])
                 }
                 if (page_selectionne_2 == NAV_PAGES_TEXTFIELD_MED_NOM)
                 {
-                    handleEditableTextFieldEvents(NAV_PAGES_TEXTFIELD, &event, (t + counter_of_i)->nom);
+                    if (strlen(NAV_PAGES_TEXTFIELD->text) < sizeof((t + counter_of_i)->nom))
+                        handleEditableTextFieldEvents(NAV_PAGES_TEXTFIELD, &event, (t + counter_of_i)->nom);
+                    else
+                    {
+                        NAV_PAGES_TEXTFIELD->text[strlen(NAV_PAGES_TEXTFIELD->text) - 1] = '\0';
+                    }
                 }
                 else if (page_selectionne_2 == NAV_PAGES_TEXTFIELD_CATEGORY)
                 {
-                    handleEditableTextFieldEvents(NAV_PAGES_TEXTFIELD + 1, &event, (t + counter_of_i)->categorie);
+                    if (strlen((NAV_PAGES_TEXTFIELD + 1)->text) < sizeof((t + counter_of_i)->categorie))
+                        handleEditableTextFieldEvents(NAV_PAGES_TEXTFIELD + 1, &event, (t + counter_of_i)->categorie);
+                    else
+                    {
+                        (NAV_PAGES_TEXTFIELD + 1)->text[strlen((NAV_PAGES_TEXTFIELD + 1)->text) - 1] = '\0';
+                    }
                 }
                 else if (page_selectionne_2 == NAV_PAGES_TEXTFIELD_PRIX)
                 {
-                    memset(PrixCHAR, 0, sizeof(PrixCHAR));
-                    snprintf(PrixCHAR, sizeof(PrixCHAR), "%.2f", (t + counter_of_i)->prix);
-                    handleEditableTextFieldEvents(NAV_PAGES_TEXTFIELD + 2, &event, PrixCHAR);
-                    sscanf(PrixCHAR, "%f", &(t + counter_of_i)->prix);
+                    if (strlen((NAV_PAGES_TEXTFIELD + 2)->text) < 5)
+                    {
+
+                        memset(PrixCHAR, 0, sizeof(PrixCHAR));
+                        snprintf(PrixCHAR, sizeof(PrixCHAR), "%.2f", (t + counter_of_i)->prix);
+                        handleEditableTextFieldEvents(NAV_PAGES_TEXTFIELD + 2, &event, PrixCHAR);
+                        (t + counter_of_i)->prix = atof(PrixCHAR);
+
+                    }
+                    else
+                    {
+                        (NAV_PAGES_TEXTFIELD + 2)->text[strlen((NAV_PAGES_TEXTFIELD + 2)->text) - 1] = '\0';
+                    }
                 }
                 else if (page_selectionne_2 == NAV_PAGES_TEXTFIELD_QUANTITY)
                 {
-                    memset(QuantiteCHAR, 0, sizeof(QuantiteCHAR));
-                    snprintf(QuantiteCHAR, sizeof(QuantiteCHAR), "%u", (t + counter_of_i)->quant_stock);
-                    handleEditableTextFieldEvents(NAV_PAGES_TEXTFIELD + 3, &event, QuantiteCHAR);
-                    sscanf(QuantiteCHAR, "%u", &(t + counter_of_i)->quant_stock);
+                    if (strlen((NAV_PAGES_TEXTFIELD + 3)->text) < 6)
+                    {
+
+                        memset(QuantiteCHAR, 0, sizeof(QuantiteCHAR));
+                        snprintf(QuantiteCHAR, sizeof(QuantiteCHAR), "%u", (t + counter_of_i)->quant_stock);
+                        handleEditableTextFieldEvents(NAV_PAGES_TEXTFIELD + 3, &event, QuantiteCHAR);
+                        sscanf(QuantiteCHAR, "%u", &(t + counter_of_i)->quant_stock);
+                        
+                    }
+                    else
+                    {
+                        (NAV_PAGES_TEXTFIELD + 3)->text[strlen((NAV_PAGES_TEXTFIELD + 3)->text) - 1] = '\0';
+
+                    }
                 }
                 else if (page_selectionne_2 == NAV_PAGES_TEXTFIELD_FOUR_NOM)
                 {
-                    handleEditableTextFieldEvents(NAV_PAGES_TEXTFIELD + 4, &event, (t + counter_of_i)->forn.nom);
+                    if (strlen((NAV_PAGES_TEXTFIELD + 4)->text) < sizeof((t + counter_of_i)->forn.nom))
+                    {
+                        handleEditableTextFieldEvents(NAV_PAGES_TEXTFIELD + 4, &event, (t + counter_of_i)->forn.nom);
+                    }
+                    else
+                    {
+                        (NAV_PAGES_TEXTFIELD + 4)->text[strlen((NAV_PAGES_TEXTFIELD + 4)->text) - 1] = '\0';
+                        
+                    }
                 }
                 else if (page_selectionne_2 == NAV_PAGES_TEXTFIELD_FOUR_ADDRESS)
                 {
-
-                    handleEditableTextFieldEvents(NAV_PAGES_TEXTFIELD + 5, &event, (t + counter_of_i)->forn.adresse);
+                    if (strlen((NAV_PAGES_TEXTFIELD + 5)->text) < sizeof((t + counter_of_i)->forn.adresse))
+                    {
+                        handleEditableTextFieldEvents(NAV_PAGES_TEXTFIELD + 5, &event, (t + counter_of_i)->forn.adresse);
+                    }
+                    else
+                    {
+                        (NAV_PAGES_TEXTFIELD + 5)->text[strlen((NAV_PAGES_TEXTFIELD + 5)->text) - 1] = '\0';
+                    }
                 }
                 else if (page_selectionne_2 == NAV_PAGES_TEXTFIELD_FOUR_NATIONALITE)
                 {
-                    handleEditableTextFieldEvents(NAV_PAGES_TEXTFIELD + 6, &event, (t + counter_of_i)->forn.nationalite);
+                    if (strlen((NAV_PAGES_TEXTFIELD + 6)->text) < sizeof((t + counter_of_i)->forn.nationalite))
+                    {
+                        handleEditableTextFieldEvents(NAV_PAGES_TEXTFIELD + 6, &event, (t + counter_of_i)->forn.nationalite);
+                    }
+                    else
+                    {
+                        (NAV_PAGES_TEXTFIELD + 6)->text[strlen((NAV_PAGES_TEXTFIELD + 6)->text) - 1] = '\0';
+
+                    }
                 }
-                printf("s: %d\n", page_selectionne_2);
-                    printf("Medicament %d:\n", counter_of_i);
-                        printf("Code: %s\n", (t + counter_of_i)->code);
-                        printf("Nom: %s\n", (t + counter_of_i)->nom);
-                        printf("Categorie: %s\n", (t + counter_of_i)->categorie);
-                        printf("Prix: %.2f\n", (t + counter_of_i)->prix);
-                        printf("Quantite en stock: %u\n", (t + counter_of_i)->quant_stock);
-                        printf("Fournisseur:\n");
-                        printf("\tCode Four: %d\n", (t + counter_of_i)->forn.code);
-                        printf("\tNom: %s\n", (t + counter_of_i)->forn.nom);
-                        printf("\tAdresse: %s\n", (t + counter_of_i)->forn.adresse);
-                        printf("\tNationalite: %s\n", (t + counter_of_i)->forn.nationalite);
-                        printf("--------------------\n");
-                
             }
+            else if (states == PAGE_MAIN_MENU)
+            {
+                switch (event.type)
+                {
+                case SDL_QUIT:
+                    quit = true;
+                    break;
+
+                default:
+                    break;
+                }
+            }
+
             else
             {
 
@@ -967,6 +1030,7 @@ int main(int argc, char *argv[])
         }
         else if (states == PAGE_VAL_INT)
         {
+            snprintf((NAV_PAGES_TEXTFIELD + 7)->text, sizeof((NAV_PAGES_TEXTFIELD + 7)->text), "%02d/%02d", counter_of_i + 1, N);
         }
 
         SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
@@ -996,10 +1060,15 @@ int main(int argc, char *argv[])
             renderButtonRr(renderer, NAV_PAGES_BUTTON + 2, false, black);
 
             init_withrender(renderer, textfield_N.font, t, false, i);
-            for (int i = 0; i < 7; i++)
+            for (int i = 0; i < 8; i++)
             {
                 renderTextFieldRr(renderer, NAV_PAGES_TEXTFIELD + i, true, grey, "fill: ");
             }
+        }
+        else if (states = PAGE_MAIN_MENU)
+        {
+            SDL_Rect pos2 = {.x = 100, .y = 100, .w = 800, .h = 600};
+            renderText(renderer, textfield_N.font, "********Menu De Gestion********\n1. Afficher le detail du stock de la pharmacie\n\n2. Afficher les medicaments de la categorie ayant le moins de medicament de la pharmacie\n\n 3. Afficher medicaments:\n\ta. D'un fournisseur donne\n\tb. D'une cateforie donnee\n\tc. Ayant un prix donne\n\n4. Ajouter un medicament:\n\ta. Au debut du tableau\n\tb. A la fin du tableau\n\tc. En une position donnee\n\td. Apres le 2eme medicament ayant la meme categorie aue celui a inserer\n\n5. Supprimier un medicament:\n\ta. Au debut\n\tb. A la fin\n\tc. En une position donnee\n\td.Par nom du medicament\n\te. Par fournisseur\n\tf. Dont nom du fournisseur se termine par une lettre donnee\n\n6. Quitter le programe\n\n********************************************************************\n", black, pos2);
         }
         SDL_RenderPresent(renderer);
         SDL_Delay(16);
